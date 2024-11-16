@@ -2,7 +2,7 @@ version: '3'
 
 services:
   backend1:
-    build: .
+    build: nginx:alpine
     container_name: backend1
     volumes:
       - ./backend1/index.html:/usr/share/nginx/html/index.html
@@ -10,7 +10,7 @@ services:
       - backend-net
 
   backend2:
-    build: .
+    build: nginx:alpine
     container_name: backend2
     volumes:
       - ./backend2/index.html:/usr/share/nginx/html/index.html

@@ -1,42 +1,37 @@
-version: '3.9'
+version: '3'
 
 services:
+
   traefik:
     image: traefik:v2.10
-    container_name: traefik
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
     ports:
-      - "8082:8082"
-      - "8081:80"
-    networks:
-      - backend-net
-
-  backend1:
-    image: nginx:alpine
-    container_name: backend1
+      - "80:80"
+      - "8080:8080"
     volumes:
-      - ./backend1/index.html:/usr/share/nginx/html/index.html
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - web
+
+  app1:
+    image: nginx:alpine
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend1.rule=Host(`backend1.localhost`)"
-      - "traefik.http.services.backend1.loadbalancer.server.port=80"
+      - "traefik.http.routers.app1.rule=Host(`app1.local`)"
     networks:
-      - backend-net
+      - web
 
-  backend2:
+  app2:
     image: nginx:alpine
-    container_name: backend2
-    volumes:
-      - ./backend2/index.html:/usr/share/nginx/html/index.html
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend2.rule=Host(`backend2.localhost`)"
-      - "traefik.http.services.backend2.loadbalancer.server.port=80"
+      - "traefik.http.routers.app2.rule=Host(`app2.local`)"
     networks:
-      - backend-net
+      - web
 
 networks:
-  backend-net:
-    driver: bridge
+  web:
+    external: true

@@ -1,1 +1,6 @@
-http://backend1.localhost:8082/
+(add to /etc/hosts)
+127.0.0.1 app1.local
+127.0.0.1 app2.local
+
+docker network create web
+docker run -d --name app3 --label "traefik.enable=true" --label "traefik.http.routers.app3.rule=Host(\`app3.local\`)" --network "web" nginx:alpine
